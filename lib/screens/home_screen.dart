@@ -88,40 +88,53 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Welcome, ${authProvider.currentUser?.fullName ?? 'Student'}',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            Text('Use the quick actions below to check in or review your records.'),
-            const SizedBox(height: 32),
-            CustomButton(
-              label: _isScanning ? 'Initializing camera...' : 'Open Camera to scan QR',
-              icon: Icons.camera_alt_outlined,
-              isPrimary: true,
-              onPressed: _isScanning ? null : () => _scanQr(context),
-            ),
-            const SizedBox(height: 16),
-            CustomButton(
-              label: 'Attendance history',
-              icon: Icons.school_outlined,
-              onPressed: () async {
-                await attendanceProvider.fetchHistory();
-                if (!mounted) return;
-                Navigator.of(context).pushNamed(AttendanceHistoryScreen.routeName);
-              },
-            ),
-          ],
+        body: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Welcome, ${authProvider.currentUser?.fullName ?? 'Student'}',
+                style: Theme.of(context)
+                    .textTheme
+                    .headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 16),
+              if (authProvider.currentUser?.id == AuthProvider.demoUserId) ...[
+                Card(
+                  color: Theme.of(context).colorScheme.secondaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text(
+                      'You are exploring the demo mode with sample data. Connect a backend and log in with your real account when you are ready.',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
+              Text('Use the quick actions below to check in or review your records.'),
+              const SizedBox(height: 32),
+              CustomButton(
+                label: _isScanning ? 'Initializing camera...' : 'Open Camera to scan QR',
+                icon: Icons.camera_alt_outlined,
+                isPrimary: true,
+                onPressed: _isScanning ? null : () => _scanQr(context),
+              ),
+              const SizedBox(height: 16),
+              CustomButton(
+                label: 'Attendance history',
+                icon: Icons.school_outlined,
+                onPressed: () async {
+                  await attendanceProvider.fetchHistory();
+                  if (!mounted) return;
+                  Navigator.of(context).pushNamed(AttendanceHistoryScreen.routeName);
+                },
+              ),
+            ],
+          ),
         ),
-      ),
     );
   }
 }

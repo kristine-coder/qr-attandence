@@ -70,4 +70,51 @@ class AttendanceProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> loadDemoData() async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+      final today = DateTime.now();
+      final day0 = DateTime(today.year, today.month, today.day);
+      final day1 = day0.subtract(const Duration(days: 1));
+      final day2 = day0.subtract(const Duration(days: 4));
+      final day3 = day0.subtract(const Duration(days: 7));
+
+      _records
+        ..clear()
+        ..addAll([
+          AttendanceRecord(
+            id: 'demo-1',
+            courseName: 'Mobile Development',
+            room: 'C-120',
+            lectureDate: day1,
+            checkedAt: day1.add(const Duration(hours: 9, minutes: 5)),
+            status: AttendanceStatus.present,
+          ),
+          AttendanceRecord(
+            id: 'demo-2',
+            courseName: 'Software Engineering',
+            room: 'B-204',
+            lectureDate: day2,
+            checkedAt: day2.add(const Duration(hours: 8, minutes: 55)),
+            status: AttendanceStatus.late,
+          ),
+          AttendanceRecord(
+            id: 'demo-3',
+            courseName: 'Discrete Mathematics',
+            room: 'A-101',
+            lectureDate: day3,
+            checkedAt: null,
+            status: AttendanceStatus.absent,
+          ),
+        ]);
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
 }

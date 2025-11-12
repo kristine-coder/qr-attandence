@@ -8,6 +8,8 @@ class AuthProvider extends ChangeNotifier {
 
   final AuthService _authService;
 
+  static const String demoUserId = 'demo-student';
+
   User? _currentUser;
   bool _loading = false;
   String? _error;
@@ -16,6 +18,7 @@ class AuthProvider extends ChangeNotifier {
   bool get isLoading => _loading;
   String? get error => _error;
   bool get isAuthenticated => _currentUser != null;
+  bool get isDemoUser => _currentUser?.id == demoUserId;
 
   Future<void> login({
     required String email,
@@ -34,6 +37,26 @@ class AuthProvider extends ChangeNotifier {
       );
     } on Exception catch (e) {
       _error = e.toString();
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> useDemoAccount() async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await Future<void>.delayed(const Duration(milliseconds: 350));
+      _currentUser = const User(
+        id: demoUserId,
+        email: 'student.demo@university.edu',
+        fullName: 'Demo Student',
+        faculty: 'Computer Science',
+        avatarUrl: '',
+      );
     } finally {
       _loading = false;
       notifyListeners();
