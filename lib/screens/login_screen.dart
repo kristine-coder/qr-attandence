@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
+import '../providers/attendance_provider.dart';
 import '../widgets/custom_button.dart';
 import 'home_screen.dart';
 
@@ -44,6 +45,17 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       return;
     }
+
+    if (!mounted) return;
+    Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+  }
+
+  Future<void> _launchDemoMode() async {
+    final authProvider = context.read<AuthProvider>();
+    final attendanceProvider = context.read<AttendanceProvider>();
+
+    await authProvider.useDemoAccount();
+    await attendanceProvider.loadDemoData();
 
     if (!mounted) return;
     Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
@@ -128,6 +140,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           icon: Icons.login,
                           isPrimary: true,
                           onPressed: authProvider.isLoading ? null : _submit,
+                        ),
+                        const SizedBox(height: 12),
+                        OutlinedButton.icon(
+                          onPressed: authProvider.isLoading ? null : _launchDemoMode,
+                          icon: const Icon(Icons.play_circle_outline),
+                          label: const Text('Explore demo mode'),
                         ),
                       ],
                     ),
